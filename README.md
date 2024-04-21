@@ -165,7 +165,36 @@ VSCode扩展商店安装 Stylelint 插件
 
 团队协作
 ## Commitizen配置
+团队协作中除了代码，免不了用Git进行版本控制和协同开发，但不是每个开发者在提交的时候都会认真书写，导致回溯代码版本时候摸不着头脑。
+清晰且统一的提交描述（Commit message）风格，能够降低协作项目的维护成本，提高合作开发效率。使用Commitizen即可帮助我们设定一个标准。
 
+
+快速安装依赖
+安装commitizen和其适配器cz-conventional-changelog
+
+
+```shell
+pnpm add commitizen cz-conventional-changelog -D
+```
+在package.json的script中添加一个lint命令
+
+```json
+"commit": "git-cz"
+```
+在package.json中添加一个config配置
+```json
+"config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  }
+```
+使用流程
+配置好之后，就可以用pnpm commit代替之前的git commit了！执行命令后就会出现标准的提交类型选项，照着填就行。
+
+![alt text](image.png)
+
+Husky配置
 
 资料： https://gitee.com/somecat/vite_vue3_ts_antdv4_unocss_template/tree/6618632fed05818a116d2571d20b6d1873b95540
 
