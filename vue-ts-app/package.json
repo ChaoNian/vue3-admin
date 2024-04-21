@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "prettier": "prettier --write \"./**/*.{html,vue,ts,js,json,md}\"",
     "lint:style": "stylelint \"./**/*.{css,less,vue,html}\" --fix",
+    "prepare": "husky install",
     "eslint": "eslint src --ext .js,.vue,.ts,.jsx,.tsx --ignore-path .gitignore --fix",
     "commit": "git-cz"
   },
@@ -21,6 +22,8 @@
     "vue": "^3.4.21"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.2.2",
+    "@commitlint/config-conventional": "^19.2.2",
     "@eslint/js": "^9.0.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "commitizen": "^4.3.0",
@@ -28,6 +31,8 @@
     "eslint": "^9.0.0",
     "eslint-plugin-vue": "^9.25.0",
     "globals": "^15.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.2",
     "postcss": "^8.4.38",
     "postcss-html": "^1.6.0",
     "postcss-less": "^6.0.0",

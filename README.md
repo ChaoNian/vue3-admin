@@ -169,7 +169,7 @@ VSCode扩展商店安装 Stylelint 插件
 清晰且统一的提交描述（Commit message）风格，能够降低协作项目的维护成本，提高合作开发效率。使用Commitizen即可帮助我们设定一个标准。
 
 
-快速安装依赖
+**快速安装依赖**
 安装commitizen和其适配器cz-conventional-changelog
 
 
@@ -194,7 +194,118 @@ pnpm add commitizen cz-conventional-changelog -D
 
 ![alt text](image.png)
 
-Husky配置
+**Husky配置**
+最后再上一道保险，代码提交前的强制校验，保证那些没有按规定规范书写的老鼠屎代码不会坏了整锅前端项目粥，另外还能规范提交描述，属于团队协作必备的检验流程。 ~哈士奇~Hasky可以为 Git 客户端增加钩子（hooks）功能，让你在特定事件（如 commit、push）发生时触发自定义的代码审查、自动化测试、提交描述规范等任务。
+
+**Husky安装和配置**
+```shell
+pnpm add husky@8.0.3 -D
+```
+在package.json的script中添加一个prepare命令
+
+```json
+"prepare": "husky install"
+```
+prepare脚本是 npm 的特殊脚本之一，它在npm install命令之后执行，这样项目的其他同学在装包的时候就会自动执行该命令来执行husky安装。 直接执行pnpm prepare，根目录会多一个.husky目录，然后运行以下husky命令添加pre-commit钩子。
+
+```shell
+pnpm husky .husky/pre-commit "pnpm eslint && pnpm prettier && pnpm lint:style"
+```
+执行后会在.husky目录下生成一个pre-commit文件。当git commit的时候就会执行pnpm eslint与pnpm prettier，如果命令出现报错，就不会提交成功，以此来保证提交代码的质量和格式规范！
+```
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+pnpm eslint && pnpm prettier && pnpm lint:style
+```
+试一下，发现Eslint的逻辑报错能够终止git提交了
+
+不过要注意的是，仅Eslint报的错误会终止Git提交，如果Eslint没问题，stylelint有问题，则会出现提交成功然后再自动修复的问题，导致提交上去的代码仍然是有问题的。解决方案就是用Lint-stage。
+
+**Lint-staged安装和配置**
+lint-staged可以在git staged阶段的文件上执行代码检查（Linters），包括ESLint和Stylelint等。好处是你可以通过设置只检查通过git add添加到暂存区的文件，避免每次检查都把整个项目的代码都检查一遍，从而提高效率，避免不必要的耗时。
+
+**安装依赖**
+```shell
+pnpm add lint-staged -D
+```
+在package.json的script中添加一个pre-commit命令
+```json
+"pre-commit": "lint-staged"
+```
+新建 .lintstagedrc配置文件并添加以下命令
+```json
+{
+  "src/**/*.{html,vue,ts,js,json,md}": [
+    "prettier --write",
+    "eslint --fix",
+    "stylelint --fix"]
+}
+```
+
+修改.husky/pre-commit文件，提交时执行lint-staged
+
+```
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+pnpm run pre-commit
+```
+试一下，没问题！自动修复了。
+
+
+**commitlint安装和配置**
+最后再顺手把提交描述也规范下，术语叫“约定式提交（Conventional Commits）”，commit-msg可以帮助我们检查提交的消息是否符合规定，回看提交记录的时候不会头皮发
+```shell
+pnpm add @commitlint/config-conventional @commitlint/cli -D
+```
+
+根目录下新建.commitlint.config.cjs配置文件：
+```js
+module.exports = {
+  extends: ['@commitlint/config-conventional'],
+  rules: {
+    'type-enum': [ // type枚举
+        2, 'always',
+        [
+          'build', // 编译相关的修改，例如发布版本、对项目构建或者依赖的改动
+          'feat', // 新功能
+          'fix', // 修补bug
+          'docs', // 文档修改
+          'style', // 代码格式修改, 注意不是 css 修改
+          'refactor', // 重构
+          'perf', // 优化相关，比如提升性能、体验
+          'test', // 测试用例修改
+          'revert', // 代码回滚
+          'ci', // 持续集成修改
+          'config', // 配置修改
+          'chore', // 其他改动
+        ],
+    ],
+    'type-empty': [2, 'never'], // never: type不能为空; always: type必须为空
+    'type-case': [0, 'always', 'lower-case'], // type必须小写，upper-case大写，camel-case小驼峰，kebab-case短横线，pascal-case大驼峰，等等
+    'scope-empty': [0],
+    'scope-case': [0],
+    'subject-empty': [2, 'never'], // subject不能为空
+    'subject-case': [0],
+    'subject-full-stop': [0, 'never', '.'], // subject以.为结束标记
+    'header-max-length': [2, 'always', 72], // header最长72
+    'body-leading-blank': [0], // body换行
+    'footer-leading-blank': [0, 'always'], // footer以空行开头
+  }
+}
+```
+
+
+在package.json的script中添加一个commitlint命令
+```json
+"commitlint": "commitlint --config .commitlint.config.cjs -e -V"
+```
+运行以下husky命令添加commit-msg钩子
+```shell
+pnpm husky add .husky/commit-msg "npm run commitlint"
+```
+
 
 资料： https://gitee.com/somecat/vite_vue3_ts_antdv4_unocss_template/tree/6618632fed05818a116d2571d20b6d1873b95540
 
