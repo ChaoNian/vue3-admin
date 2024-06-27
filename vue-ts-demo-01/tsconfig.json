@@ -1,0 +1,23 @@
+{
+  "compilerOptions":{
+    "isolatedModules": true, // 因为 Vite 使用 esbuild 来转译 TypeScript，并受限于单文件转译的限制
+    "verbatimModuleSyntax": true,
+
+    "strict": true, // true  使用选项式API 搭配noImplicitAny rue (或者至少开启 compilerOptions.noImplicitThis，它是 strict 模式的一部分)，才可以获得对组件选项中 this 的类型检查。否则 this 会被认为是 any。
+    "noImplicitAny": true,
+
+    "module": "nodenext"
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.vitest.json"
+    }
+  ]
+}
