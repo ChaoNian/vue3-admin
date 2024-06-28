@@ -1,0 +1,12 @@
+复制内容# 忽略不想格式化的文件
+/dist
+/public
+/src/libs
+/docs/*.html
+
+*.html
+**/services
+src/mock/data
+src/mock/auto
+*.min.js
+**/auto
